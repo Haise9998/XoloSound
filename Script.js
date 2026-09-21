@@ -1,154 +1,220 @@
-// ------------------------------------
-// CARRITO DE COMPRAS
-// ------------------------------------
+const productos = [
+
+{
+nombre:"Pioneer TS-A6970F",
+categoria:"audio",
+estado:"nuevo",
+icono:"🔊",
+precio:1250
+},
+
+{
+nombre:"Subwoofer JBL Stage 1220",
+categoria:"audio",
+estado:"nuevo",
+icono:"🔊",
+precio:2600
+},
+
+{
+nombre:"Pantalla Android 10 Pulgadas",
+categoria:"pantalla",
+estado:"nuevo",
+icono:"📺",
+precio:4200
+},
+
+{
+nombre:"Amplificador Pioneer GM",
+categoria:"audio",
+estado:"nuevo",
+icono:"⚡",
+precio:3500
+},
+
+{
+nombre:"Kicker CompR 12",
+categoria:"audio",
+estado:"seminuevo",
+icono:"🔊",
+precio:1800
+},
+
+{
+nombre:"Kenwood 1000W",
+categoria:"audio",
+estado:"seminuevo",
+icono:"⚡",
+precio:2200
+},
+
+{
+nombre:"Pantalla Android Usada",
+categoria:"pantalla",
+estado:"seminuevo",
+icono:"📺",
+precio:2100
+},
+
+{
+nombre:"Taladro Milwaukee",
+categoria:"herramienta",
+estado:"seminuevo",
+icono:"🛠️",
+precio:1800
+}
+
+];
 
 let carrito = [];
+let listaActual = [...productos];
 
-// ------------------------------------
-// AGREGAR PRODUCTO
-// ------------------------------------
-function agregarCarrito(nombre, precio) {
-  const productoExistente = carrito.find(producto => producto.nombre === nombre);
+function render(lista){
 
-  if (productoExistente) {
-    productoExistente.cantidad++;
-  } else {
-    carrito.push({
-      nombre: nombre,
-      precio: precio,
-      cantidad: 1
+    const catalogo =
+    document.getElementById("catalogo");
+
+    catalogo.innerHTML="";
+
+    lista.forEach(producto=>{
+
+        catalogo.innerHTML += `
+
+        <div class="producto">
+
+            <span class="estado ${producto.estado}">
+                ${producto.estado.toUpperCase()}
+            </span>
+
+            <div class="icono">
+                ${producto.icono}
+            </div>
+
+            <h3>${producto.nombre}</h3>
+
+            <p>
+                Categoría:
+                ${producto.categoria}
+            </p>
+
+            <span class="precio">
+                $${producto.precio}
+            </span>
+
+            <button
+            onclick="agregarCarrito(
+            '${producto.nombre}',
+            ${producto.precio}
+            )">
+            Agregar al carrito
+            </button>
+
+        </div>
+        `;
     });
-  }
 
-  actualizarCarrito();
 }
 
-// ------------------------------------
-// ACTUALIZAR CARRITO
-// ------------------------------------
-function actualizarCarrito() {
-  const lista = document.getElementById("listaCarrito");
-  lista.innerHTML = "";
+function buscarProducto(){
 
-  if (carrito.length === 0) {
-    lista.innerHTML = `<p class="mensaje-vacio">No hay productos en el pedido.</p>`;
-  }
+    const texto =
+    document.getElementById("busqueda")
+    .value.toLowerCase();
 
-  carrito.forEach((producto, indice) => {
-    const elemento = document.createElement("div");
-    elemento.classList.add("item-carrito");
+    listaActual =
+    productos.filter(producto =>
+        producto.nombre
+        .toLowerCase()
+        .includes(texto)
+    );
 
-    elemento.innerHTML = `
-      <h4>${producto.nombre}</h4>
-      <p>$${producto.precio.toLocaleString()} x ${producto.cantidad}</p>
-      <div class="controles">
-        <button onclick="disminuirCantidad(${indice})">-</button>
-        <strong>${producto.cantidad}</strong>
-        <button onclick="aumentarCantidad(${indice})">+</button>
-      </div>
-    `;
-
-    lista.appendChild(elemento);
-  });
-
-  calcularTotal();
+    render(listaActual);
 }
 
-// ------------------------------------
-// AUMENTAR CANTIDAD
-// ------------------------------------
-function aumentarCantidad(indice) {
-  carrito[indice].cantidad++;
-  actualizarCarrito();
-}
+function filtrarCategoria(){
 
-// ------------------------------------
-// DISMINUIR CANTIDAD
-// ------------------------------------
-function disminuirCantidad(indice) {
-  carrito[indice].cantidad--;
-  if (carrito[indice].cantidad <= 0) {
-    carrito.splice(indice, 1);
-  }
-  actualizarCarrito();
-}
+    const categoria =
+    document.getElementById("categoria")
+    .value;
 
-// ------------------------------------
-// CALCULAR TOTAL
-// ------------------------------------
-function calcularTotal() {
-  let total = 0;
-  let cantidad = 0;
+    if(categoria==="todos"){
 
-  carrito.forEach(producto => {
-    total += producto.precio * producto.cantidad;
-    cantidad += producto.cantidad;
-  });
-
-  document.getElementById("total").textContent = total.toLocaleString();
-  document.getElementById("cantidadProductos").textContent = cantidad;
-}
-
-// ------------------------------------
-// VACIAR CARRITO
-// ------------------------------------
-function vaciarCarrito() {
-  carrito = [];
-  actualizarCarrito();
-}
-
-// ------------------------------------
-// REALIZAR PEDIDO
-// ------------------------------------
-function realizarPedido() {
-  if (carrito.length === 0) {
-    alert("Agregue productos antes de realizar el pedido.");
-    return;
-  }
-
-  let mensaje = "🔊🛠️ XOLO SOUND & HERRAMIENTAS\n\nResumen del pedido:\n\n";
-
-  carrito.forEach(producto => {
-    mensaje += `- ${producto.nombre} (x${producto.cantidad}): $${(producto.precio * producto.cantidad).toLocaleString()}\n`;
-  });
-
-  let totalFinal = document.getElementById("total").textContent;
-  mensaje += `\nTotal a pagar: $${totalFinal} MXN\n\n¡Gracias por su preferencia!`;
-
-  alert(mensaje);
-  vaciarCarrito();
-}
-
-// ------------------------------------
-// FILTRAR MENÚ POR CATEGORÍA
-// ------------------------------------
-function filtrarMenu(categoria) {
-  const productos = document.querySelectorAll(".producto");
-
-  productos.forEach(producto => {
-    if (categoria === 'todos' || producto.classList.contains(categoria)) {
-      producto.style.display = "block";
-    } else {
-      producto.style.display = "none";
+        listaActual = [...productos];
     }
-  });
-}
 
-// ------------------------------------
-// BUSCADOR EN TIEMPO REAL
-// ------------------------------------
-function buscarProducto() {
-  const texto = document.getElementById("buscar").value.toLowerCase();
-  const productos = document.querySelectorAll(".producto");
+    else{
 
-  productos.forEach(producto => {
-    const nombre = producto.querySelector("h2").textContent.toLowerCase();
-    const descripcion = producto.querySelector("p").textContent.toLowerCase();
+        listaActual = productos.filter(producto =>
 
-    if (nombre.includes(texto) || descripcion.includes(texto)) {
-      producto.style.display = "block";
-    } else {
-      producto.style.display = "none";
+        producto.categoria===categoria ||
+
+        producto.estado===categoria
+
+        );
     }
-  });
+
+    render(listaActual);
 }
+
+function ordenPrecioAsc(){
+
+    listaActual.sort(
+        (a,b)=>a.precio-b.precio
+    );
+
+    render(listaActual);
+}
+
+function ordenPrecioDesc(){
+
+    listaActual.sort(
+        (a,b)=>b.precio-a.precio
+    );
+
+    render(listaActual);
+}
+
+function ordenNombre(){
+
+    listaActual.sort(
+        (a,b)=>
+        a.nombre.localeCompare(b.nombre)
+    );
+
+    render(listaActual);
+}
+
+function agregarCarrito(nombre,precio){
+
+    carrito.push({
+        nombre,
+        precio
+    });
+
+    actualizarCarrito();
+}
+
+function actualizarCarrito(){
+
+    const lista =
+    document.getElementById("listaCarrito");
+
+    lista.innerHTML="";
+
+    let total = 0;
+
+    carrito.forEach(item=>{
+
+        total += item.precio;
+
+        lista.innerHTML +=
+        `<li>${item.nombre} - $${item.precio}</li>`;
+    });
+
+    document.getElementById("total")
+    .innerText =
+    `Total: $${total}`;
+}
+
+render(productos);
+
