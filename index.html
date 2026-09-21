@@ -1,0 +1,197 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xolo Sound & Herramientas</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+<header>
+  <div class="logo-container">
+    <img src="Posibilidad 03.png" alt="Logo Xolo Sound" class="logo-img">
+  </div>
+  <h1>🔊 Xolo Sound & Herramientas</h1>
+  <p>Audio para autos, equipo profesional y tecnología solar</p>
+</header>
+
+<!-- MENÚ DE NAVEGACIÓN -->
+<nav>
+  <button onclick="filtrarMenu('todos')">Todos</button>
+  <button onclick="filtrarMenu('audio')">🎵 Car Audio</button>
+  <button onclick="filtrarMenu('mecanica')">🔧 Mecánica</button>
+  <button onclick="filtrarMenu('construccion')">🧱 Construcción</button>
+  <button onclick="filtrarMenu('carpinteria')">🪵 Carpintería</button>
+  <button onclick="filtrarMenu('solar')">☀️ Energía Solar</button>
+</nav>
+
+<!-- BUSCADOR -->
+<section class="buscador">
+  <input type="text" id="buscar" placeholder="Buscar producto o herramienta..." onkeyup="buscarProducto()">
+</section>
+
+<main>
+<!-- PRODUCTOS -->
+<section class="productos" id="productos">
+
+  <!-- CAR AUDIO: BOCINAS Y ESTÉREOS -->
+  <div class="producto audio">
+    <div class="icono">🎵</div>
+    <h2>Pioneer TS-A6970F (6x9")</h2>
+    <p>Bocinas coaxiales de 5 vías, 650W Max, graves profundos.</p>
+    <span class="precio">$1,250</span>
+    <button onclick="agregarCarrito('Pioneer TS-A6970F (6x9)', 1250)">Agregar</button>
+  </div>
+
+  <div class="producto audio">
+    <div class="icono">🔊</div>
+    <h2>Kicker 46CSC654 (6.5")</h2>
+    <p>Bocinas coaxiales serie CS, 300W Max, sonido nítido.</p>
+    <span class="precio">$1,100</span>
+    <button onclick="agregarCarrito('Kicker 46CSC654 (6.5)', 1100)">Agregar</button>
+  </div>
+
+  <div class="producto audio">
+    <div class="icono">📱</div>
+    <h2>Sony XAV-AX1000</h2>
+    <p>Pantalla 6.2" táctil con Apple CarPlay y Android Auto.</p>
+    <span class="precio">$4,500</span>
+    <button onclick="agregarCarrito('Sony XAV-AX1000 Pantalla', 4500)">Agregar</button>
+  </div>
+
+  <div class="producto audio">
+    <div class="icono">📱</div>
+    <h2>Pantalla Android 9" (Genérica)</h2>
+    <p>Android 13, 2GB RAM, 32GB ROM, GPS, Wi-Fi y Bluetooth.</p>
+    <span class="precio">$2,900</span>
+    <button onclick="agregarCarrito('Pantalla Android 9 Pulgadas', 2900)">Agregar</button>
+  </div>
+
+  <div class="producto audio">
+    <div class="icono">📻</div>
+    <h2>Nakamichi NQ711B (1-DIN)</h2>
+    <p>Autoestéreo digital con Bluetooth, USB y luces LED.</p>
+    <span class="precio">$1,200</span>
+    <button onclick="agregarCarrito('Autoestéreo Nakamichi NQ711B', 1200)">Agregar</button>
+  </div>
+
+  <div class="producto audio">
+    <div class="icono">🔌</div>
+    <h2>Kit de Cableado Calibre 4</h2>
+    <p>Cable de corriente libre de oxígeno y portafusibles ANL.</p>
+    <span class="precio">$750</span>
+    <button onclick="agregarCarrito('Kit de Cableado Calibre 4', 750)">Agregar</button>
+  </div>
+
+  <!-- HERRAMIENTAS: MECÁNICA -->
+  <div class="producto mecanica">
+    <div class="icono">🔧</div>
+    <h2>Juego de Herramientas 150 Pzas</h2>
+    <p>Dados milimétricos, estándar y matraca en estuche.</p>
+    <span class="precio">$2,100</span>
+    <button onclick="agregarCarrito('Juego de Herramientas 150 Pzas', 2100)">Agregar</button>
+  </div>
+
+  <div class="producto mecanica">
+    <div class="icono">🚗</div>
+    <h2>Gato Hidráulico de Patín 3 Ton</h2>
+    <p>Diseño de perfil bajo con válvula de seguridad.</p>
+    <span class="precio">$1,950</span>
+    <button onclick="agregarCarrito('Gato Hidráulico 3 Toneladas', 1950)">Agregar</button>
+  </div>
+
+  <div class="producto mecanica">
+    <div class="icono">🛠️</div>
+    <h2>Torres de Soporte 3 Ton (Par)</h2>
+    <p>Base de acero con trinquete autoblocante y ajuste seguro.</p>
+    <span class="precio">$750</span>
+    <button onclick="agregarCarrito('Torres de Soporte 3 Ton (Par)', 750)">Agregar</button>
+  </div>
+
+  <!-- HERRAMIENTAS: CONSTRUCCIÓN -->
+  <div class="producto construccion">
+    <div class="icono">🧱</div>
+    <h2>Rotomartillo SDS Plus 800W</h2>
+    <p>3 funciones: taladro, rotomartillo y cincelado profesional.</p>
+    <span class="precio">$2,600</span>
+    <button onclick="agregarCarrito('Rotomartillo SDS Plus 800W', 2600)">Agregar</button>
+  </div>
+
+  <div class="producto construccion">
+    <div class="icono">📏</div>
+    <h2>Nivel Láser de Líneas Cruzadas</h2>
+    <p>Proyección láser verde de alta visibilidad hasta 30m.</p>
+    <span class="precio">$1,350</span>
+    <button onclick="agregarCarrito('Nivel Láser Autonivelante', 1350)">Agregar</button>
+  </div>
+
+  <!-- HERRAMIENTAS: CARPINTERÍA -->
+  <div class="producto carpinteria">
+    <div class="icono">🪵</div>
+    <h2>Sierra Circular 7-1/4" 1400W</h2>
+    <p>Motor potente para cortes rectos y en ángulo precisos.</p>
+    <span class="precio">$1,550</span>
+    <button onclick="agregarCarrito('Sierra Circular 7-1/4 1400W', 1550)">Agregar</button>
+  </div>
+
+  <div class="producto carpinteria">
+    <div class="icono">🪚</div>
+    <h2>Lijadora Orbital de Palma</h2>
+    <p>Sistema de extracción de polvo integrado y diseño ergonómico.</p>
+    <span class="precio">$650</span>
+    <button onclick="agregarCarrito('Lijadora Orbital de Palma', 650)">Agregar</button>
+  </div>
+
+  <div class="producto carpinteria">
+    <div class="icono">🌀</div>
+    <h2>Router / Fresadora 1/4" 500W</h2>
+    <p>Ideal para cortes decorativos, molduras y uniones.</p>
+    <span class="precio">$1,400</span>
+    <button onclick="agregarCarrito('Router / Fresadora 1/4 500W', 1400)">Agregar</button>
+  </div>
+
+  <!-- ARTÍCULOS SOLARES -->
+  <div class="producto solar">
+    <div class="icono">☀️</div>
+    <h2>Panel Solar Monocristalino 100W</h2>
+    <p>Alta eficiencia con marco de aluminio anticorrosivo.</p>
+    <span class="precio">$1,650</span>
+    <button onclick="agregarCarrito('Panel Solar Monocristalino 100W', 1650)">Agregar</button>
+  </div>
+
+  <div class="producto solar">
+    <div class="icono">⚡</div>
+    <h2>Inversor de Corriente 1000W</h2>
+    <p>Onda senoidal pura, convierte 12V a 110V de forma segura.</p>
+    <span class="precio">$2,200</span>
+    <button onclick="agregarCarrito('Inversor de Corriente 1000W', 2200)">Agregar</button>
+  </div>
+
+</section>
+
+<!-- CARRITO -->
+<aside class="carrito">
+  <h2>🛒 Mi pedido</h2>
+  <div id="listaCarrito">
+    <p class="mensaje-vacio">No hay productos en el pedido.</p>
+  </div>
+
+  <div class="resumen">
+    <p>Productos: <span id="cantidadProductos">0</span></p>
+    <h3>Total: $<span id="total">0</span></h3>
+  </div>
+
+  <button class="btn-comprar" onclick="realizarPedido()">Realizar pedido</button>
+  <button class="btn-vaciar" onclick="vaciarCarrito()">Vaciar carrito</button>
+</aside>
+</main>
+
+<footer>
+  <p>🔊🛠️ Xolo Sound & Herramientas</p>
+  <p>¡Calidad y potencia para tu auto, taller y hogar!</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
