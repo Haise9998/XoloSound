@@ -8,6 +8,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     background: #0b0b0b;
     color: white;
+    overflow-x: hidden; /* Evita desplazamientos horizontales innecesarios (Actividad 3) */
 }
 
 header {
@@ -32,7 +33,9 @@ header {
 .logo {
     width: 120px;
     height: 120px;
-    object-fit: contain;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #00ffff;
 }
 
 header h1 {
@@ -51,6 +54,8 @@ header h1 {
 .historia p {
     max-width: 900px;
     margin: auto;
+    color: #ccc;
+    line-height: 1.6;
 }
 
 .controles {
@@ -67,17 +72,39 @@ header h1 {
     padding: 12px;
     border: none;
     border-radius: 10px;
+    font-size: 14px;
+}
+
+.controles input {
+    background: #1f1f1f;
+    color: white;
+    width: 250px;
+    border: 1px solid #444;
+}
+
+.controles select {
+    background: #1f1f1f;
+    color: white;
+    border: 1px solid #444;
 }
 
 .controles button {
     cursor: pointer;
     background: #00ffff;
+    color: #0b0b0b;
     font-weight: bold;
+    transition: 0.3s;
+}
+
+.controles button:hover {
+    background: #ff006e;
+    color: white;
 }
 
 .titulo-seccion {
     text-align: center;
     margin: 20px;
+    color: #00ffff;
 }
 
 .catalogo {
@@ -85,6 +112,8 @@ header h1 {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
     padding: 20px;
+    max-width: 1300px;
+    margin: auto;
 }
 
 .producto {
@@ -93,6 +122,7 @@ header h1 {
     border-radius: 20px;
     border: 1px solid #444;
     transition: .3s;
+    text-align: center;
 }
 
 .producto:hover {
@@ -102,7 +132,7 @@ header h1 {
 
 .icono {
     font-size: 45px;
-    text-align: center;
+    margin: 10px 0;
 }
 
 .estado {
@@ -116,15 +146,27 @@ header h1 {
 
 .nuevo {
     background: #00c853;
+    color: white;
 }
 
 .seminuevo {
     background: #ff6d00;
+    color: white;
+}
+
+.producto h3 {
+    margin: 10px 0;
+    font-size: 1.2rem;
+}
+
+.producto p {
+    color: #aaa;
+    font-size: 14px;
 }
 
 .precio {
     display: block;
-    margin: 10px 0;
+    margin: 15px 0;
     color: #00ffff;
     font-weight: bold;
     font-size: 1.3rem;
@@ -138,19 +180,40 @@ header h1 {
     cursor: pointer;
     background: #ff006e;
     color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.producto button:hover {
+    background: #d8005b;
 }
 
 .carrito {
     padding: 30px;
     background: #111;
+    max-width: 800px;
+    margin: 30px auto;
+    border-radius: 15px;
+    border: 1px solid #333;
+}
+
+.carrito h2 {
+    color: #00ffff;
+    text-align: center;
 }
 
 .carrito ul {
     margin-top: 15px;
+    list-style: none;
+    padding: 0;
 }
 
 .carrito li {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: #1a1a1a;
+    border-radius: 6px;
+    border-left: 4px solid #ff006e;
 }
 
 footer {
@@ -168,8 +231,14 @@ footer {
     padding: 15px 25px;
     border-radius: 30px;
     font-weight: bold;
+    transition: 0.3s;
 }
 
+.whatsapp:hover {
+    background: #1ebe57;
+}
+
+/* DISEÑO RESPONSIVO (Actividad 3) */
 @media (max-width: 768px) {
     header h1 {
         font-size: 2rem;
@@ -177,5 +246,20 @@ footer {
 
     .logo {
         width: 90px;
+        height: 90px;
+    }
+
+    .controles {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px;
+    }
+
+    .controles input,
+    .controles select,
+    .controles button {
+        width: 100%;
     }
 }
+
+  
