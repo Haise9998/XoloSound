@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XOLO SOUND | Car Audio & Herramientas</title>
-    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="Linkos.css">
 </head>
 <body>
 
@@ -74,7 +74,7 @@
     </a>
 </footer>
 
-<!-- SCRIPT INTEGRADO DIRECTAMENTE EN EL HTML -->
+<!-- SCRIPT DIRECTO E INSTANTÁNEO -->
 <script>
     const productos = [
         {
@@ -232,11 +232,9 @@
         }
     }
 
-    // Ejecutar la carga de productos al abrir la página
-    window.onload = function() {
-        render(productos);
-        actualizarCarrito();
-    };
+    // Ejecutar de inmediato al leer el script porque está al final del body
+    render(productos);
+    actualizarCarrito();
 </script>
 
 </body>
