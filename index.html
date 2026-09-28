@@ -5,6 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XOLO SOUND | Car Audio & Herramientas</title>
     <link rel="stylesheet" href="estilos.css">
+    <style>
+        /* Estilos adicionales para el formulario de checkout y panel admin */
+        .checkout-form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+        }
+        .checkout-form input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #1f1f1f;
+            color: white;
+            font-size: 14px;
+        }
+        .btn-comprar {
+            background: #00c853 !important;
+            color: white;
+            font-weight: bold;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .btn-comprar:hover {
+            background: #009624 !important;
+        }
+        .admin-panel {
+            background: #171717;
+            border: 1px dashed #00ffff;
+            padding: 20px;
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 15px;
+        }
+        .admin-panel h3 {
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+        .pedido-item {
+            background: #222;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #00ffff;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
 
@@ -57,10 +111,31 @@
     <div class="catalogo" id="catalogo"></div>
 </section>
 
+<!-- CARRITO Y FORMULARIO DE REGISTRO / FACTURACIÓN -->
 <section class="carrito">
-    <h2>Carrito de Compras</h2>
+    <h2>Carrito de Compras y Facturación</h2>
     <ul id="listaCarrito"></ul>
-    <h3 id="total">Total: $0</h3>
+    <h3 id="total">Total: $0 MXN</h3>
+
+    <div class="checkout-form">
+        <h3 style="color: #00ffff; font-size: 1.1rem;">Datos para tu Factura y Envío</h3>
+        <input type="text" id="nombre" placeholder="Nombre(s)" required>
+        <input type="text" id="apellido" placeholder="Apellido(s)" required>
+        <input type="email" id="email" placeholder="Correo electrónico (para enviar factura)" required>
+        <input type="text" id="direccion" placeholder="Dirección / Ciudad (Ej. El Hongo, Tecate)" required>
+        
+        <button class="btn-comprar" onclick="finalizarCompra()">Finalizar Compra y Registrar Pedido</button>
+    </div>
+</section>
+
+<!-- PANEL DE ADMINISTRADOR (Para ver los registros guardados) -->
+<section class="admin-panel">
+    <h3>Panel de Administrador (Registros de Clientes y Ventas)</h3>
+    <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Aquí puedes ver los pedidos guardados en este navegador.</p>
+    <div id="listaPedidosAdmin">
+        <p style="color: #777;">No hay pedidos registrados todavía.</p>
+    </div>
+    <button onclick="limpiarRegistros()" style="background: #ff006e; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 12px;">Limpiar Historial</button>
 </section>
 
 <footer>
@@ -74,65 +149,17 @@
     </a>
 </footer>
 
-<!-- SCRIPT DIRECTO E INSTANTÁNEO -->
+<!-- SCRIPT DE GESTIÓN Y CARRITO -->
 <script>
     const productos = [
-        {
-            nombre: "Pioneer TS-A6970F",
-            categoria: "audio",
-            estado: "nuevo",
-            icono: "🔊",
-            precio: 1250
-        },
-        {
-            nombre: "Subwoofer JBL Stage 1220",
-            categoria: "audio",
-            estado: "nuevo",
-            icono: "🔊",
-            precio: 2600
-        },
-        {
-            nombre: "Pantalla Android 10 Pulgadas",
-            categoria: "pantalla",
-            estado: "nuevo",
-            icono: "📺",
-            precio: 4200
-        },
-        {
-            nombre: "Amplificador Pioneer GM",
-            categoria: "audio",
-            estado: "nuevo",
-            icono: "⚡",
-            precio: 3500
-        },
-        {
-            nombre: "Kicker CompR 12",
-            categoria: "audio",
-            estado: "seminuevo",
-            icono: "🔊",
-            precio: 1800
-        },
-        {
-            nombre: "Kenwood 1000W",
-            categoria: "audio",
-            estado: "seminuevo",
-            icono: "⚡",
-            precio: 2200
-        },
-        {
-            nombre: "Pantalla Android Usada",
-            categoria: "pantalla",
-            estado: "seminuevo",
-            icono: "📺",
-            precio: 2100
-        },
-        {
-            nombre: "Taladro Milwaukee",
-            categoria: "herramienta",
-            estado: "seminuevo",
-            icono: "🛠️",
-            precio: 1800
-        }
+        { nombre: "Pioneer TS-A6970F", categoria: "audio", estado: "nuevo", icono: "🔊", precio: 1250 },
+        { nombre: "Subwoofer JBL Stage 1220", categoria: "audio", estado: "nuevo", icono: "🔊", precio: 2600 },
+        { nombre: "Pantalla Android 10 Pulgadas", categoria: "pantalla", estado: "nuevo", icono: "📺", precio: 4200 },
+        { nombre: "Amplificador Pioneer GM", categoria: "audio", estado: "nuevo", icono: "⚡", precio: 3500 },
+        { nombre: "Kicker CompR 12", categoria: "audio", estado: "seminuevo", icono: "🔊", precio: 1800 },
+        { nombre: "Kenwood 1000W", categoria: "audio", estado: "seminuevo", icono: "⚡", precio: 2200 },
+        { nombre: "Pantalla Android Usada", categoria: "pantalla", estado: "seminuevo", icono: "📺", precio: 2100 },
+        { nombre: "Taladro Milwaukee", categoria: "herramienta", estado: "seminuevo", icono: "🛠️", precio: 1800 }
     ];
 
     let carrito = [];
@@ -143,7 +170,6 @@
         if (!catalogo) return;
         
         catalogo.innerHTML = "";
-
         if (!lista || lista.length === 0) {
             catalogo.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">No se encontraron productos.</p>`;
             return;
@@ -152,89 +178,168 @@
         lista.forEach(producto => {
             catalogo.innerHTML += `
             <div class="producto">
-                <span class="estado ${producto.estado}">
-                    ${producto.estado.toUpperCase()}
-                </span>
-                <div class="icono">
-                    ${producto.icono}
-                </div>
+                <span class="estado ${producto.estado}">${producto.estado.toUpperCase()}</span>
+                <div class="icono">${producto.icono}</div>
                 <h3>${producto.nombre}</h3>
                 <p>Categoría: ${producto.categoria}</p>
-                <span class="precio">$${producto.precio}</span>
-                <button onclick="agregarCarrito('${producto.nombre}', ${producto.precio})">
-                    Agregar al carrito
-                </button>
+                <span class="precio">$${producto.precio} MXN</span>
+                <button onclick="agregarCarrito('${producto.nombre}', ${producto.precio})">Agregar al carrito</button>
             </div>
             `;
         });
     }
 
     function buscarProducto() {
-        const inputBusqueda = document.getElementById("busqueda");
-        const inputCategoria = document.getElementById("categoria");
-        
-        const texto = inputBusqueda ? inputBusqueda.value.toLowerCase() : "";
-        const categoriaSelect = inputCategoria ? inputCategoria.value : "todos";
+        const texto = document.getElementById("busqueda").value.toLowerCase();
+        const categoriaSelect = document.getElementById("categoria").value;
 
         listaActual = productos.filter(producto => {
             const coincideNombre = producto.nombre.toLowerCase().includes(texto);
             const coincideCategoria = categoriaSelect === "todos" || producto.categoria === categoriaSelect || producto.estado === categoriaSelect;
             return coincideNombre && coincideCategoria;
         });
-
         render(listaActual);
     }
 
-    function filtrarCategoria() {
-        buscarProducto();
-    }
-
-    function ordenPrecioAsc() {
-        listaActual.sort((a, b) => a.precio - b.precio);
-        render(listaActual);
-    }
-
-    function ordenPrecioDesc() {
-        listaActual.sort((a, b) => b.precio - a.precio);
-        render(listaActual);
-    }
-
-    function ordenNombre() {
-        listaActual.sort((a, b) => a.nombre.localeCompare(b.nombre));
-        render(listaActual);
-    }
+    function filtrarCategoria() { buscarProducto(); }
+    function ordenPrecioAsc() { listaActual.sort((a, b) => a.precio - b.precio); render(listaActual); }
+    function ordenPrecioDesc() { listaActual.sort((a, b) => b.precio - a.precio); render(listaActual); }
+    function ordenNombre() { listaActual.sort((a, b) => a.nombre.localeCompare(b.nombre)); render(listaActual); }
 
     function agregarCarrito(nombre, precio) {
-        carrito.push({ nombre, precio });
+        const index = carrito.findIndex(item => item.nombre === nombre);
+        if (index !== -1) {
+            carrito[index].cantidad += 1;
+        } else {
+            carrito.push({ nombre, precio, cantidad: 1 });
+        }
         actualizarCarrito();
     }
 
     function actualizarCarrito() {
         const lista = document.getElementById("listaCarrito");
         if (!lista) return;
-        
         lista.innerHTML = "";
-
         let total = 0;
 
         if (carrito.length === 0) {
             lista.innerHTML = `<li style="text-align:center; color:#777; border:none;">El carrito está vacío.</li>`;
         } else {
-            carrito.forEach(item => {
-                total += item.precio;
-                lista.innerHTML += `<li>${item.nombre} - $${item.precio} MXN</li>`;
+            carrito.forEach((item, index) => {
+                let subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                lista.innerHTML += `
+                    <li style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>${item.nombre} (x${item.cantidad}) - $${subtotal} MXN</span>
+                        <button onclick="reducirItem(${index})" style="background:#ff006e; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">X</button>
+                    </li>`;
             });
         }
+        document.getElementById("total").innerText = `Total: $${total} MXN`;
+    }
 
-        const totalElemento = document.getElementById("total");
-        if (totalElemento) {
-            totalElemento.innerText = `Total: $${total} MXN`;
+    function reducirItem(index) {
+        carrito[index].cantidad -= 1;
+        if (carrito[index].cantidad <= 0) {
+            carrito.splice(index, 1);
+        }
+        actualizarCarrito();
+    }
+
+    function finalizarCompra() {
+        const nombre = document.getElementById("nombre").value.trim();
+        const apellido = document.getElementById("apellido").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const direccion = document.getElementById("direccion").value.trim();
+
+        if (carrito.length === 0) {
+            alert("Tu carrito está vacío.");
+            return;
+        }
+
+        if (!nombre || !apellido || !email || !direccion) {
+            alert("Por favor completa todos tus datos (Nombre, Apellido, Email y Dirección) para registrar tu pedido.");
+            return;
+        }
+
+        let totalGeneral = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+        const nuevoPedido = {
+            id: Date.now(),
+            fecha: new Date().toLocaleString(),
+            cliente: { nombre, apellido, email, direccion },
+            productos: [...carrito],
+            total: totalGeneral
+        };
+
+        // Guardar en localStorage
+        let pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
+        pedidos.push(nuevoPedido);
+        localStorage.setItem("xolo_pedidos", JSON.stringify(pedidos));
+
+        alert(`¡Compra registrada con éxito!\nGracias ${nombre}. Hemos guardado tus datos y tu factura será enviada a: ${email}`);
+
+        // Opcional: Generar enlace para enviar resumen por WhatsApp a tu número
+        let mensajeWp = `Hola Xolo Sound, quiero confirmar mi pedido:%0A` +
+                        `👤 Cliente: ${nombre} ${apellido}%0A` +
+                        `📧 Email: ${email}%0A` +
+                        `📍 Dirección: ${direccion}%0A%0A` +
+                        `🛒 Productos:%0A`;
+        
+        carrito.forEach(i => {
+            mensajeWp += `- ${i.nombre} (Cant: ${i.cantidad}) - Costo c/u: $${i.precio} - Subtotal: $${i.precio * i.cantidad}%0A`;
+        });
+        mensajeWp += `%0A💰 Total a pagar: $${totalGeneral} MXN`;
+
+        // Limpiar carrito y formulario
+        carrito = [];
+        actualizarCarrito();
+        document.getElementById("nombre").value = "";
+        document.getElementById("apellido").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("direccion").value = "";
+
+        cargarPedidosAdmin();
+
+        // Redirigir a WhatsApp con el pedido listo
+        window.open(`https://wa.me/6651205695?text=${mensajeWp}`, '_blank');
+    }
+
+    function cargarPedidosAdmin() {
+        const contenedor = document.getElementById("listaPedidosAdmin");
+        const pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
+
+        if (pedidos.length === 0) {
+            contenedor.innerHTML = `<p style="color: #777;">No hay pedidos registrados todavía.</p>`;
+            return;
+        }
+
+        contenedor.innerHTML = "";
+        pedidos.reverse().forEach(p => {
+            let prodsHtml = p.productos.map(pr => `&nbsp;&nbsp;• ${pr.nombre} (x${pr.cantidad}) - $${pr.precio * pr.cantidad} MXN`).join("<br>");
+            contenedor.innerHTML += `
+                <div class="pedido-item">
+                    <strong>Fecha:</strong> ${p.fecha} <br>
+                    <strong>Comprador:</strong> ${p.cliente.nombre} ${p.cliente.apellido} (<a href="mailto:${p.cliente.email}" style="color:#00ffff;">${p.cliente.email}</a>)<br>
+                    <strong>Dirección / Factura:</strong> ${p.cliente.direccion}<br>
+                    <strong>Productos comprados:</strong><br>${prodsHtml}<br>
+                    <strong>Total:</strong> <span style="color: #00ffcc; font-weight: bold;">$${p.total} MXN</span>
+                </div>
+            `;
+        });
+    }
+
+    function limpiarRegistros() {
+        if (confirm("¿Estás seguro de borrar todo el historial de pedidos?")) {
+            localStorage.removeItem("xolo_pedidos");
+            cargarPedidosAdmin();
         }
     }
 
-    // Ejecutar de inmediato al leer el script porque está al final del body
+    // Inicializar
     render(productos);
     actualizarCarrito();
+    cargarPedidosAdmin();
 </script>
 
 </body>
