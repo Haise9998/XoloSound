@@ -6,7 +6,6 @@
     <title>XOLO SOUND | Car Audio & Herramientas</title>
     <link rel="stylesheet" href="estilos.css">
     <style>
-        /* Estilos adicionales para el formulario de checkout y panel admin */
         .checkout-form {
             margin-top: 20px;
             display: flex;
@@ -78,20 +77,12 @@
         XOLO SOUND es un negocio establecido en El Hongo, Tecate,
         especializado en audio automotriz, pantallas Android,
         amplificadores, bocinas, subwoofers y herramientas.
-        Contamos con casi 14 años de experiencia ofreciendo
-        equipos nuevos y seminuevos cuidadosamente seleccionados.
     </p>
 </section>
 
-<!-- CONTROLES DE BÚSQUEDA, FILTRO Y ORDENAMIENTO -->
+<!-- CONTROLES DE BÚSQUEDA Y FILTRO -->
 <section class="controles">
-    <input
-        type="text"
-        id="busqueda"
-        placeholder="Buscar producto por nombre..."
-        onkeyup="buscarProducto()"
-    >
-
+    <input type="text" id="busqueda" placeholder="Buscar producto por nombre..." onkeyup="buscarProducto()">
     <select id="categoria" onchange="filtrarCategoria()">
         <option value="todos">Todas las categorías</option>
         <option value="nuevo">Nuevos</option>
@@ -100,7 +91,6 @@
         <option value="pantalla">Pantallas</option>
         <option value="herramienta">Herramientas</option>
     </select>
-
     <button onclick="ordenPrecioAsc()">Precio Menor a Mayor</button>
     <button onclick="ordenPrecioDesc()">Precio Mayor a Menor</button>
     <button onclick="ordenNombre()">Ordenar A-Z</button>
@@ -111,7 +101,7 @@
     <div class="catalogo" id="catalogo"></div>
 </section>
 
-<!-- CARRITO Y FORMULARIO DE REGISTRO / FACTURACIÓN -->
+<!-- CARRITO Y FACTURACIÓN -->
 <section class="carrito">
     <h2>Carrito de Compras y Facturación</h2>
     <ul id="listaCarrito"></ul>
@@ -128,28 +118,28 @@
     </div>
 </section>
 
-<!-- PANEL DE ADMINISTRADOR (Para ver los registros guardados) -->
+<!-- PANEL DE ADMINISTRADOR -->
 <section class="admin-panel">
     <h3>Panel de Administrador (Registros de Clientes y Ventas)</h3>
-    <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Aquí puedes ver los pedidos guardados en este navegador.</p>
+    <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Visualiza los clientes registrados, exporta o limpia el historial descargando un CSV de respaldo automáticamente.</p>
+    
+    <!-- Botones de administración -->
+    <div style="margin-bottom: 15px;">
+        <button onclick="exportarCSV()" style="background: #00ffff; color: #0b0b0b; font-weight: bold; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-right: 10px;">📥 Descargar Registros en CSV</button>
+        <button onclick="limpiarRegistros()" style="background: #ff006e; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 13px;">🗑️ Limpiar Historial y Descargar CSV</button>
+    </div>
+
     <div id="listaPedidosAdmin">
         <p style="color: #777;">No hay pedidos registrados todavía.</p>
     </div>
-    <button onclick="limpiarRegistros()" style="background: #ff006e; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 12px;">Limpiar Historial</button>
 </section>
 
 <footer>
     <h3>XOLO SOUND</h3>
     <p>El Hongo, Tecate, Baja California</p>
-    <a
-        class="whatsapp"
-        href="https://wa.me/6651205695"
-        target="_blank">
-        Contáctanos por WhatsApp
-    </a>
+    <a class="whatsapp" href="https://wa.me/6651205695" target="_blank">Contáctanos por WhatsApp</a>
 </footer>
 
-<!-- SCRIPT DE GESTIÓN Y CARRITO -->
 <script>
     const productos = [
         { nombre: "Pioneer TS-A6970F", categoria: "audio", estado: "nuevo", icono: "🔊", precio: 1250 },
@@ -168,13 +158,11 @@
     function render(lista) {
         const catalogo = document.getElementById("catalogo");
         if (!catalogo) return;
-        
         catalogo.innerHTML = "";
         if (!lista || lista.length === 0) {
             catalogo.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">No se encontraron productos.</p>`;
             return;
         }
-
         lista.forEach(producto => {
             catalogo.innerHTML += `
             <div class="producto">
@@ -184,15 +172,13 @@
                 <p>Categoría: ${producto.categoria}</p>
                 <span class="precio">$${producto.precio} MXN</span>
                 <button onclick="agregarCarrito('${producto.nombre}', ${producto.precio})">Agregar al carrito</button>
-            </div>
-            `;
+            </div>`;
         });
     }
 
     function buscarProducto() {
         const texto = document.getElementById("busqueda").value.toLowerCase();
         const categoriaSelect = document.getElementById("categoria").value;
-
         listaActual = productos.filter(producto => {
             const coincideNombre = producto.nombre.toLowerCase().includes(texto);
             const coincideCategoria = categoriaSelect === "todos" || producto.categoria === categoriaSelect || producto.estado === categoriaSelect;
@@ -221,7 +207,6 @@
         if (!lista) return;
         lista.innerHTML = "";
         let total = 0;
-
         if (carrito.length === 0) {
             lista.innerHTML = `<li style="text-align:center; color:#777; border:none;">El carrito está vacío.</li>`;
         } else {
@@ -256,14 +241,12 @@
             alert("Tu carrito está vacío.");
             return;
         }
-
         if (!nombre || !apellido || !email || !direccion) {
-            alert("Por favor completa todos tus datos (Nombre, Apellido, Email y Dirección) para registrar tu pedido.");
+            alert("Por favor completa todos tus datos (Nombre, Apellido, Email y Dirección).");
             return;
         }
 
         let totalGeneral = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-
         const nuevoPedido = {
             id: Date.now(),
             fecha: new Date().toLocaleString(),
@@ -272,26 +255,22 @@
             total: totalGeneral
         };
 
-        // Guardar en localStorage
         let pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
         pedidos.push(nuevoPedido);
         localStorage.setItem("xolo_pedidos", JSON.stringify(pedidos));
 
-        alert(`¡Compra registrada con éxito!\nGracias ${nombre}. Hemos guardado tus datos y tu factura será enviada a: ${email}`);
+        alert(`¡Compra registrada con éxito!\nGracias ${nombre}. Tu factura será enviada a: ${email}`);
 
-        // Opcional: Generar enlace para enviar resumen por WhatsApp a tu número
         let mensajeWp = `Hola Xolo Sound, quiero confirmar mi pedido:%0A` +
                         `👤 Cliente: ${nombre} ${apellido}%0A` +
                         `📧 Email: ${email}%0A` +
-                        `📍 Dirección: ${direccion}%0A%0A` +
+                        `📍 Dirección (Factura): ${direccion}%0A%0A` +
                         `🛒 Productos:%0A`;
-        
         carrito.forEach(i => {
-            mensajeWp += `- ${i.nombre} (Cant: ${i.cantidad}) - Costo c/u: $${i.precio} - Subtotal: $${i.precio * i.cantidad}%0A`;
+            mensajeWp += `- ${i.nombre} (Cant: ${i.cantidad}) - Precio: $${i.precio} - Subtotal: $${i.precio * i.cantidad}%0A`;
         });
         mensajeWp += `%0A💰 Total a pagar: $${totalGeneral} MXN`;
 
-        // Limpiar carrito y formulario
         carrito = [];
         actualizarCarrito();
         document.getElementById("nombre").value = "";
@@ -300,9 +279,59 @@
         document.getElementById("direccion").value = "";
 
         cargarPedidosAdmin();
-
-        // Redirigir a WhatsApp con el pedido listo
         window.open(`https://wa.me/6651205695?text=${mensajeWp}`, '_blank');
+    }
+
+    function exportarCSV() {
+        const pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
+        if (pedidos.length === 0) {
+            alert("No hay registros de ventas para exportar todavía.");
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,Fecha,Nombre,Apellido,Email,Direccion,Producto,Cantidad,Costo_Unitario,Total_Pedido\n";
+
+        pedidos.forEach(p => {
+            p.productos.forEach(prod => {
+                let fila = [
+                    `"${p.fecha}"`,
+                    `"${p.cliente.nombre}"`,
+                    `"${p.cliente.apellido}"`,
+                    `"${p.cliente.email}"`,
+                    `"${p.cliente.direccion}"`,
+                    `"${prod.nombre}"`,
+                    prod.cantidad,
+                    prod.precio,
+                    p.total
+                ].join(",");
+                csvContent += fila + "\n";
+            });
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "registros_clientes_xolosound.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function limpiarRegistros() {
+        const pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
+        if (pedidos.length === 0) {
+            alert("No hay registros para limpiar.");
+            return;
+        }
+
+        if (confirm("¿Estás seguro de limpiar el historial? Se descargará un archivo CSV de respaldo con todos tus datos actuales antes de borrarlo.")) {
+            // Primero exporta automáticamente el respaldo CSV
+            exportarCSV();
+            
+            // Luego borra los datos del navegador y actualiza el panel
+            localStorage.removeItem("xolo_pedidos");
+            cargarPedidosAdmin();
+        }
     }
 
     function cargarPedidosAdmin() {
@@ -316,27 +345,19 @@
 
         contenedor.innerHTML = "";
         pedidos.reverse().forEach(p => {
-            let prodsHtml = p.productos.map(pr => `&nbsp;&nbsp;• ${pr.nombre} (x${pr.cantidad}) - $${pr.precio * pr.cantidad} MXN`).join("<br>");
+            let prodsHtml = p.productos.map(pr => `&nbsp;&nbsp;• ${pr.nombre} (x${pr.cantidad}) - Costo c/u: $${pr.precio} - Subtotal: $${pr.precio * pr.cantidad} MXN`).join("<br>");
             contenedor.innerHTML += `
                 <div class="pedido-item">
                     <strong>Fecha:</strong> ${p.fecha} <br>
-                    <strong>Comprador:</strong> ${p.cliente.nombre} ${p.cliente.apellido} (<a href="mailto:${p.cliente.email}" style="color:#00ffff;">${p.cliente.email}</a>)<br>
+                    <strong>Comprador:</strong> ${p.cliente.nombre} ${p.cliente.apellido} — <a href="mailto:${p.cliente.email}" style="color:#00ffff;">${p.cliente.email}</a><br>
                     <strong>Dirección / Factura:</strong> ${p.cliente.direccion}<br>
                     <strong>Productos comprados:</strong><br>${prodsHtml}<br>
-                    <strong>Total:</strong> <span style="color: #00ffcc; font-weight: bold;">$${p.total} MXN</span>
+                    <strong>Total del pedido:</strong> <span style="color: #00ffcc; font-weight: bold;">$${p.total} MXN</span>
                 </div>
             `;
         });
     }
 
-    function limpiarRegistros() {
-        if (confirm("¿Estás seguro de borrar todo el historial de pedidos?")) {
-            localStorage.removeItem("xolo_pedidos");
-            cargarPedidosAdmin();
-        }
-    }
-
-    // Inicializar
     render(productos);
     actualizarCarrito();
     cargarPedidosAdmin();
