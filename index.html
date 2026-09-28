@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XOLO SOUND | Car Audio & Herramientas</title>
     <link rel="stylesheet" href="estilos.css">
+    <!-- Incluimos la librería oficial de EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Reemplaza esto con tu Public Key de EmailJS
+            emailjs.init({
+                publicKey: "TU_PUBLIC_KEY_AQUI",
+            });
+        })();
+    </script>
     <style>
         .checkout-form {
             margin-top: 20px;
@@ -44,7 +54,7 @@
             max-width: 800px;
             margin: 30px auto;
             border-radius: 15px;
-            display: none; /* Oculto por seguridad por defecto */
+            display: none;
         }
         .admin-login-trigger {
             max-width: 400px;
@@ -154,13 +164,13 @@
     <h3 id="total">Total: $0 MXN</h3>
 
     <div class="checkout-form">
-        <h3 style="color: #00ffff; font-size: 1.1rem;">Datos para tu Factura y Envío</h3>
+        <h3 style="color: #00ffff; font-size: 1.1rem;">Datos para tu Ticket y Envío</h3>
         <input type="text" id="nombre" placeholder="Nombre(s)" required>
         <input type="text" id="apellido" placeholder="Apellido(s)" required>
-        <input type="email" id="email" placeholder="Correo electrónico (para enviar factura)" required>
+        <input type="email" id="email" placeholder="Correo electrónico (para recibir tu ticket)" required>
         <input type="text" id="direccion" placeholder="Dirección / Ciudad (Ej. El Hongo, Tecate)" required>
         
-        <button class="btn-comprar" onclick="finalizarCompra()">Finalizar Compra y Registrar Pedido</button>
+        <button class="btn-comprar" onclick="finalizarCompra()">Finalizar Compra y Enviar Ticket por Correo</button>
     </div>
 </section>
 
@@ -198,7 +208,11 @@
 </footer>
 
 <script>
-    const PASSWORD_ADMIN = "xolosound2026"; // Contraseña para desbloquear el panel
+    const PASSWORD_ADMIN = "xolosound2026"; 
+
+    // CREDENCIALES DE EMAILJS (Reemplázalas con las tuyas)
+    const EMAILJS_SERVICE_ID = "TU_SERVICE_ID";
+    const EMAILJS_TEMPLATE_ID = "TU_TEMPLATE_ID";
 
     const productos = [
         { nombre: "Pioneer TS-A6970F", categoria: "audio", estado: "nuevo", icono: "🔊", precio: 1250 },
@@ -306,6 +320,13 @@
         }
 
         let totalGeneral = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+        
+        // Generar texto detallado de los productos para el correo
+        let detalleProductosHtml = "";
+        carrito.forEach(i => {
+            detalleProductosHtml += `• ${i.nombre} (Cant: ${i.cantidad}) - $${i.precio * i.cantidad} MXN\n`;
+        });
+
         const nuevoPedido = {
             id: Date.now(),
             fecha: new Date().toLocaleString(),
@@ -314,33 +335,39 @@
             total: totalGeneral
         };
 
+        // Guardar localmente para el panel de administración
         let pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
         pedidos.push(nuevoPedido);
         localStorage.setItem("xolo_pedidos", JSON.stringify(pedidos));
 
-        alert(`¡Compra registrada con éxito!\nGracias ${nombre}. Tu factura será enviada a: ${email}`);
+        // Parámetros que se enviarán a tu plantilla de EmailJS
+        const templateParams = {
+            to_email: email,
+            nombre_cliente: `${nombre} ${apellido}`,
+            direccion_cliente: direccion,
+            detalle_productos: detalleProductosHtml,
+            total_pedido: `$${totalGeneral} MXN`
+        };
 
-        let mensajeWp = `Hola Xolo Sound, quiero confirmar mi pedido:%0A` +
-                        `👤 Cliente: ${nombre} ${apellido}%0A` +
-                        `📧 Email: ${email}%0A` +
-                        `📍 Dirección (Factura): ${direccion}%0A%0A` +
-                        `🛒 Productos:%0A`;
-        carrito.forEach(i => {
-            mensajeWp += `- ${i.nombre} (Cant: ${i.cantidad}) - Precio: $${i.precio} - Subtotal: $${i.precio * i.cantidad}%0A`;
-        });
-        mensajeWp += `%0A💰 Total a pagar: $${totalGeneral} MXN`;
+        // Enviar correo mediante EmailJS
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+            .then(function(response) {
+                alert(`¡Compra exitosa!\nSe ha enviado el ticket de compra al correo: ${email}`);
+                
+                carrito = [];
+                actualizarCarrito();
+                document.getElementById("nombre").value = "";
+                document.getElementById("apellido").value = "";
+                document.getElementById("email").value = "";
+                document.getElementById("direccion").value = "";
 
-        carrito = [];
-        actualizarCarrito();
-        document.getElementById("nombre").value = "";
-        document.getElementById("apellido").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("direccion").value = "";
-
-        if (sessionStorage.getItem("admin_logueado") === "true") {
-            cargarPedidosAdmin();
-        }
-        window.open(`https://wa.me/6651205695?text=${mensajeWp}`, '_blank');
+                if (sessionStorage.getItem("admin_logueado") === "true") {
+                    cargarPedidosAdmin();
+                }
+            }, function(error) {
+                alert("La compra se registró en el sistema, pero hubo un error al enviar el correo. Por favor verifica tus datos de EmailJS.");
+                console.error("Error de EmailJS:", error);
+            });
     }
 
     function verificarAdmin() {
