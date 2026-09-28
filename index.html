@@ -45,9 +45,24 @@
             margin: 30px auto;
             border-radius: 15px;
         }
+        .admin-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .admin-badge {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+        }
         .admin-panel h3 {
             color: #00ffff;
-            margin-bottom: 10px;
+            margin: 0;
+            font-size: 1.2rem;
         }
         .pedido-item {
             background: #222;
@@ -120,13 +135,17 @@
 
 <!-- PANEL DE ADMINISTRADOR -->
 <section class="admin-panel">
-    <h3>Panel de Administrador (Registros de Clientes y Ventas)</h3>
-    <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Visualiza los clientes registrados, exporta o limpia el historial descargando un CSV de respaldo automáticamente.</p>
+    <div class="admin-header">
+        <img src="Posibilidad 04.png" alt="Credencial Administrador" class="admin-badge">
+        <div>
+            <h3>Panel de Administrador (Registros de Clientes y Ventas)</h3>
+            <p style="color: #aaa; font-size: 13px; margin: 2px 0 0 0;">Visualiza los clientes registrados o limpia el historial descargando un CSV de respaldo automáticamente.</p>
+        </div>
+    </div>
     
-    <!-- Botones de administración -->
-    <div style="margin-bottom: 15px;">
-        <button onclick="exportarCSV()" style="background: #00ffff; color: #0b0b0b; font-weight: bold; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-right: 10px;">📥 Descargar Registros en CSV</button>
-        <button onclick="limpiarRegistros()" style="background: #ff006e; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 13px;">🗑️ Limpiar Historial y Descargar CSV</button>
+    <!-- Botón de administración conservado -->
+    <div style="margin: 15px 0;">
+        <button onclick="limpiarRegistros()" style="background: #ff006e; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;">🗑️ Limpiar Historial y Descargar CSV</button>
     </div>
 
     <div id="listaPedidosAdmin">
@@ -284,10 +303,7 @@
 
     function exportarCSV() {
         const pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
-        if (pedidos.length === 0) {
-            alert("No hay registros de ventas para exportar todavía.");
-            return;
-        }
+        if (pedidos.length === 0) return;
 
         let csvContent = "data:text/csv;charset=utf-8,Fecha,Nombre,Apellido,Email,Direccion,Producto,Cantidad,Costo_Unitario,Total_Pedido\n";
 
@@ -325,10 +341,7 @@
         }
 
         if (confirm("¿Estás seguro de limpiar el historial? Se descargará un archivo CSV de respaldo con todos tus datos actuales antes de borrarlo.")) {
-            // Primero exporta automáticamente el respaldo CSV
             exportarCSV();
-            
-            // Luego borra los datos del navegador y actualiza el panel
             localStorage.removeItem("xolo_pedidos");
             cargarPedidosAdmin();
         }
