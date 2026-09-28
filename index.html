@@ -44,9 +44,8 @@
             max-width: 800px;
             margin: 30px auto;
             border-radius: 15px;
-            display: none; /* Oculto por defecto para cualquier visitante */
+            display: none; /* Oculto por seguridad por defecto */
         }
-        /* Contenedor discretito en el footer o zona baja para iniciar sesión */
         .admin-login-trigger {
             max-width: 400px;
             margin: 40px auto 10px auto;
@@ -89,6 +88,7 @@
             border: 2px solid #00ffff;
             box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
             flex-shrink: 0;
+            background-color: #222;
         }
         .admin-panel h3 {
             color: #00ffff;
@@ -164,14 +164,14 @@
     </div>
 </section>
 
-<!-- ACCESO DISCRETO DE ADMINISTRADOR (Visible solo como un cuadro simple) -->
+<!-- ACCESO DISCRETO DE ADMINISTRADOR -->
 <div class="admin-login-trigger" id="seccionLoginAdmin">
     <p style="color: #666; font-size: 11px; margin-bottom: 8px;">Acceso exclusivo para personal autorizado</p>
     <input type="password" id="adminPassword" placeholder="Contraseña de admin...">
     <button onclick="verificarAdmin()">Entrar</button>
 </div>
 
-<!-- PANEL DE ADMINISTRADOR (Oculto inicialmente) -->
+<!-- PANEL DE ADMINISTRADOR -->
 <section class="admin-panel" id="panelAdmin">
     <div class="admin-header">
         <img src="posibilidad-04.png" alt="Credencial Administrador" class="admin-badge">
@@ -198,10 +198,7 @@
 </footer>
 
 <script>
-    /* ========================================================
-       CONFIGURA TU CONTRASEÑA DE ADMINISTRADOR AQUÍ
-       ======================================================== */
-    const PASSWORD_ADMIN = "xolosound2026"; // Puedes cambiarla por la que gustes
+    const PASSWORD_ADMIN = "xolosound2026"; // Contraseña para desbloquear el panel
 
     const productos = [
         { nombre: "Pioneer TS-A6970F", categoria: "audio", estado: "nuevo", icono: "🔊", precio: 1250 },
@@ -346,7 +343,6 @@
         window.open(`https://wa.me/6651205695?text=${mensajeWp}`, '_blank');
     }
 
-    // --- FUNCIONES DE SEGURIDAD DEL PANEL ---
     function verificarAdmin() {
         const inputPass = document.getElementById("adminPassword").value;
         if (inputPass === PASSWORD_ADMIN) {
@@ -441,7 +437,6 @@
         });
     }
 
-    // Comprobar si ya habías iniciado sesión en esta pestaña
     window.onload = function() {
         if (sessionStorage.getItem("admin_logueado") === "true") {
             mostrarPanelAdmin();
