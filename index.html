@@ -44,6 +44,36 @@
             max-width: 800px;
             margin: 30px auto;
             border-radius: 15px;
+            display: none; /* Oculto por defecto para cualquier visitante */
+        }
+        /* Contenedor discretito en el footer o zona baja para iniciar sesión */
+        .admin-login-trigger {
+            max-width: 400px;
+            margin: 40px auto 10px auto;
+            text-align: center;
+            background: #121212;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #222;
+        }
+        .admin-login-trigger input {
+            padding: 8px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 4px;
+            font-size: 13px;
+            width: 60%;
+        }
+        .admin-login-trigger button {
+            padding: 8px 12px;
+            background: #00ffff;
+            color: #000;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
         }
         .admin-header {
             display: flex;
@@ -52,12 +82,13 @@
             margin-bottom: 10px;
         }
         .admin-badge {
-            width: 55px;
-            height: 55px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #00ffff;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+            flex-shrink: 0;
         }
         .admin-panel h3 {
             color: #00ffff;
@@ -133,19 +164,26 @@
     </div>
 </section>
 
-<!-- PANEL DE ADMINISTRADOR -->
-<section class="admin-panel">
+<!-- ACCESO DISCRETO DE ADMINISTRADOR (Visible solo como un cuadro simple) -->
+<div class="admin-login-trigger" id="seccionLoginAdmin">
+    <p style="color: #666; font-size: 11px; margin-bottom: 8px;">Acceso exclusivo para personal autorizado</p>
+    <input type="password" id="adminPassword" placeholder="Contraseña de admin...">
+    <button onclick="verificarAdmin()">Entrar</button>
+</div>
+
+<!-- PANEL DE ADMINISTRADOR (Oculto inicialmente) -->
+<section class="admin-panel" id="panelAdmin">
     <div class="admin-header">
-        <img src="Posibilidad 04.png" alt="Credencial Administrador" class="admin-badge">
+        <img src="posibilidad-04.png" alt="Credencial Administrador" class="admin-badge">
         <div>
             <h3>Panel de Administrador (Registros de Clientes y Ventas)</h3>
             <p style="color: #aaa; font-size: 13px; margin: 2px 0 0 0;">Visualiza los clientes registrados o limpia el historial descargando un CSV de respaldo automáticamente.</p>
         </div>
     </div>
     
-    <!-- Botón de administración conservado -->
-    <div style="margin: 15px 0;">
+    <div style="margin: 15px 0; display: flex; justify-content: space-between; align-items: center;">
         <button onclick="limpiarRegistros()" style="background: #ff006e; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;">🗑️ Limpiar Historial y Descargar CSV</button>
+        <button onclick="cerrarSesionAdmin()" style="background: #333; color: #aaa; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">🔒 Bloquear Panel</button>
     </div>
 
     <div id="listaPedidosAdmin">
@@ -160,6 +198,11 @@
 </footer>
 
 <script>
+    /* ========================================================
+       CONFIGURA TU CONTRASEÑA DE ADMINISTRADOR AQUÍ
+       ======================================================== */
+    const PASSWORD_ADMIN = "xolosound2026"; // Puedes cambiarla por la que gustes
+
     const productos = [
         { nombre: "Pioneer TS-A6970F", categoria: "audio", estado: "nuevo", icono: "🔊", precio: 1250 },
         { nombre: "Subwoofer JBL Stage 1220", categoria: "audio", estado: "nuevo", icono: "🔊", precio: 2600 },
@@ -297,8 +340,35 @@
         document.getElementById("email").value = "";
         document.getElementById("direccion").value = "";
 
-        cargarPedidosAdmin();
+        if (sessionStorage.getItem("admin_logueado") === "true") {
+            cargarPedidosAdmin();
+        }
         window.open(`https://wa.me/6651205695?text=${mensajeWp}`, '_blank');
+    }
+
+    // --- FUNCIONES DE SEGURIDAD DEL PANEL ---
+    function verificarAdmin() {
+        const inputPass = document.getElementById("adminPassword").value;
+        if (inputPass === PASSWORD_ADMIN) {
+            sessionStorage.setItem("admin_logueado", "true");
+            document.getElementById("adminPassword").value = "";
+            mostrarPanelAdmin();
+        } else {
+            alert("Contraseña incorrecta.");
+            document.getElementById("adminPassword").value = "";
+        }
+    }
+
+    function mostrarPanelAdmin() {
+        document.getElementById("seccionLoginAdmin").style.display = "none";
+        document.getElementById("panelAdmin").style.display = "block";
+        cargarPedidosAdmin();
+    }
+
+    function cerrarSesionAdmin() {
+        sessionStorage.removeItem("admin_logueado");
+        document.getElementById("panelAdmin").style.display = "none";
+        document.getElementById("seccionLoginAdmin").style.display = "block";
     }
 
     function exportarCSV() {
@@ -371,9 +441,15 @@
         });
     }
 
+    // Comprobar si ya habías iniciado sesión en esta pestaña
+    window.onload = function() {
+        if (sessionStorage.getItem("admin_logueado") === "true") {
+            mostrarPanelAdmin();
+        }
+    };
+
     render(productos);
     actualizarCarrito();
-    cargarPedidosAdmin();
 </script>
 
 </body>
