@@ -209,8 +209,9 @@
 <script>
     const PASSWORD_ADMIN = "xolosound2026"; 
 
+    // CREDENCIALES DE EMAILJS
     const EMAILJS_SERVICE_ID = "service_noal8vj";
-    const EMAILJS_TEMPLATE_ID = "template_vmieuq4";
+    const EMAILJS_TEMPLATE_ID = "template_kibz7wj";
 
     const productos = [
         { nombre: "Pioneer TS-A6970F", categoria: "audio", estado: "nuevo", icono: "🔊", precio: 1250 },
@@ -318,32 +319,40 @@
         }
 
         let totalGeneral = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-        
-        let detalleProductosHtml = "";
-        carrito.forEach(i => {
-            detalleProductosHtml += `• ${i.nombre} (Cant: ${i.cantidad}) - $${i.precio * i.cantidad} MXN<br>`;
-        });
+        let idPedido = Date.now();
 
         const nuevoPedido = {
-            id: Date.now(),
+            id: idPedido,
             fecha: new Date().toLocaleString(),
             cliente: { nombre, apellido, email, direccion },
             productos: [...carrito],
             total: totalGeneral
         };
 
+        // Guardar localmente para el panel de administración
         let pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
         pedidos.push(nuevoPedido);
         localStorage.setItem("xolo_pedidos", JSON.stringify(pedidos));
 
+        // Parámetros actualizados para emparejar con el diseño de tu plantilla EmailJS
         const templateParams = {
-            to_email: email,
+            email: email,
+            order_id: idPedido,
+            orders: carrito.map(item => ({
+                name: item.nombre,
+                price: item.precio * item.cantidad,
+                units: item.cantidad
+            })),
+            cost: {
+                shipping: "0",
+                tax: "0"
+            },
             nombre_cliente: `${nombre} ${apellido}`,
             direccion_cliente: direccion,
-            detalle_productos: detalleProductosHtml,
             total_pedido: `$${totalGeneral} MXN`
         };
 
+        // Enviar correo mediante EmailJS
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
             .then(function(response) {
                 alert(`¡Compra exitosa!\nSe ha enviado el ticket de compra al correo: ${email}`);
