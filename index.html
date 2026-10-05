@@ -9,7 +9,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            // Reemplaza esto con tu Public Key de EmailJS
             emailjs.init({
                 publicKey: "H_7cC0WZuHlQojtm1",
             });
@@ -210,7 +209,6 @@
 <script>
     const PASSWORD_ADMIN = "xolosound2026"; 
 
-    // CREDENCIALES DE EMAILJS (Reemplázalas con las tuyas)
     const EMAILJS_SERVICE_ID = "service_noal8vj";
     const EMAILJS_TEMPLATE_ID = "template_vmieuq4";
 
@@ -321,10 +319,9 @@
 
         let totalGeneral = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
         
-        // Generar texto detallado de los productos para el correo
         let detalleProductosHtml = "";
         carrito.forEach(i => {
-            detalleProductosHtml += `• ${i.nombre} (Cant: ${i.cantidad}) - $${i.precio * i.cantidad} MXN\n`;
+            detalleProductosHtml += `• ${i.nombre} (Cant: ${i.cantidad}) - $${i.precio * i.cantidad} MXN<br>`;
         });
 
         const nuevoPedido = {
@@ -335,12 +332,10 @@
             total: totalGeneral
         };
 
-        // Guardar localmente para el panel de administración
         let pedidos = JSON.parse(localStorage.getItem("xolo_pedidos")) || [];
         pedidos.push(nuevoPedido);
         localStorage.setItem("xolo_pedidos", JSON.stringify(pedidos));
 
-        // Parámetros que se enviarán a tu plantilla de EmailJS
         const templateParams = {
             to_email: email,
             nombre_cliente: `${nombre} ${apellido}`,
@@ -349,7 +344,6 @@
             total_pedido: `$${totalGeneral} MXN`
         };
 
-        // Enviar correo mediante EmailJS
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
             .then(function(response) {
                 alert(`¡Compra exitosa!\nSe ha enviado el ticket de compra al correo: ${email}`);
@@ -468,10 +462,9 @@
         if (sessionStorage.getItem("admin_logueado") === "true") {
             mostrarPanelAdmin();
         }
+        render(productos);
+        actualizarCarrito();
     };
-
-    render(productos);
-    actualizarCarrito();
 </script>
 
 </body>
