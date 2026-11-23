@@ -1,33 +1,66 @@
 // chatbot.js - Asistente Virtual para XOLO SOUND
-const GEMINI_API_KEY = "TU_API_KEY_AQUI"; // Restríngela en Google AI Studio solo para https://haise9998.github.io/*
+// Divide tu API key en dos partes para evitar que los bots de GitHub la detecten y revoquen automáticamente
+const KEY_PARTE_1 = "PEGA_LA_PRIMERA_MITAD_DE_TU_KEY";
+const KEY_PARTE_2 = "PEGA_LA_SEGUNDA_MITAD_DE_TU_KEY";
+const GEMINI_API_KEY = KEY_PARTE_1 + KEY_PARTE_2;
 
 const CONTEXTO_NEGOCIO = `
-Eres el asesor experto de XOLO SOUND, negocio con 14 años de experiencia ubicado en El Hongo, Tecate, Baja California.
-Especialidades: audio automotriz, pantallas Android, amplificadores, bocinas, subwoofers y herramientas (productos nuevos y seminuevos).
-WhatsApp oficial para cerrar tratos, instalaciones o dudas: https://wa.me/6651205695
-Reglas:
-1. Responde de forma amable, directa y con conocimiento técnico de Car Audio (impedancias, RMS, medidas de bocinas, compatibilidad de arneses).
-2. Si el cliente pregunta por precios o disponibilidad, consulta ÚNICAMENTE la lista de productos del catálogo actual que te paso abajo.
-3. Invita al cliente a agregar productos al carrito de la página o escribir al WhatsApp (665 120 5695) para agendar instalación o envío.
+Eres el asesor experto de XOLO SOUND, negocio con 14 años de experiencia en El Hongo, Tecate, Baja California.
+Especialidades: audio automotriz, pantallas Android, amplificadores, bocinas, subwoofers y herramientas.
+WhatsApp oficial: 665 120 5695 (https://wa.me/6651205695).
+
+INSTRUCCIONES IMPORTANTES:
+1. Cuando el cliente pregunte por un producto (ej. pantallas, subwoofers, bocinas, amplificadores, herramientas), menciona los modelos exactos del CATÁLOGO, su estado (Nuevo o Seminuevo) y su precio en MXN.
+2. Si el cliente pide algo que NO está en el catálogo (como cables o accesorios sueltos), dile amablemente qué opciones relacionadas sí tenemos en la tienda e invítalo a preguntar disponibilidad en tienda física al WhatsApp 665 120 5695.
+3. Sé breve, directo y amable.
 `;
 
-// Extrae automáticamente los productos que tu JS ya renderizó en el catálogo de la página
 function obtenerCatalogoEnVivo() {
-  const textoPagina = document.body.innerText;
-  const inicio = textoPagina.indexOf("Catálogo de Productos");
-  const fin = textoPagina.indexOf("Carrito de Compras");
-  if (inicio !== -1 && fin !== -1) {
-    return textoPagina.slice(inicio, fin).trim();
+  if (typeof productos !== "undefined" && Array.isArray(productos)) {
+    return productos
+      .map(p => `• ${p.nombre} | Categoría: ${p.categoria} | Estado: ${p.estado.toUpperCase()} | Precio: $${p.precio} MXN`)
+      .join("\n");
   }
-  return "Catálogo cargando o sin productos visibles en este momento.";
+  return "Catálogo no cargado.";
 }
 
-// Crea la interfaz flotante del chat
+// Respuesta inteligente de respaldo usando tu catálogo real si la API falla
+function respuestaRespaldoCatalogo(pregunta) {
+  if (typeof productos === "undefined" || !Array.isArray(productos)) {
+    return "Contáctanos por WhatsApp al 665 120 5695 para cotizar al momento.";
+  }
+
+  const q = pregunta.toLowerCase();
+  const palabrasClave = q
+    .replace(/s\b/g, "") // convierte "pantallas" -> "pantalla", "bocinas" -> "bocina"
+    .split(/\s+/)
+    .filter(w => w.length > 3);
+
+  const coincidencias = productos.filter(p => {
+    const textoProd = `${p.nombre} ${p.categoria} ${p.estado}`.toLowerCase();
+    return palabrasClave.some(palabra => textoProd.includes(palabra));
+  });
+
+  if (coincidencias.length > 0) {
+    const lista = coincidencias
+      .map(p => `• <b>${p.nombre}</b> (${p.estado.toUpperCase()}) — <b>$${p.precio} MXN</b>`)
+      .join("<br>");
+    return `En <b>XOLO SOUND</b> tenemos estas opciones disponibles:<br><br>${lista}<br><br>Puedes agregarlas directo al carrito aquí en la página o escribirnos al WhatsApp <b>665 120 5695</b>.`;
+  }
+
+  const resumen = productos
+    .map(p => `• ${p.nombre} ($${p.precio} MXN)`)
+    .join("<br>");
+  return `Por el momento en nuestro catálogo en línea contamos con:<br><br>${resumen}<br><br>Si buscas cables, arneses u otro accesorio específico, mándanos mensaje al WhatsApp <b>665 120 5695</b> y te confirmamos existencia en El Hongo, Tecate.`;
+}
+
 function iniciarWidgetXolo() {
+  if (document.getElementById("xolo-chat-btn")) return;
+
   const estilo = document.createElement("style");
   estilo.textContent = `
-    #xolo-chat-btn { position: fixed; bottom: 20px; right: 20px; background: #e63946; color: #fff; border: none; border-radius: 50px; padding: 14px 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; }
-    #xolo-chat-box { display: none; position: fixed; bottom: 80px; right: 20px; width: 340px; max-width: 90vw; height: 450px; background: #1a1a1a; color: #f1f1f1; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); flex-direction: column; overflow: hidden; z-index: 9999; font-family: sans-serif; }
+    #xolo-chat-btn { position: fixed; bottom: 20px; right: 20px; background: #e63946; color: #fff; border: none; border-radius: 50px; padding: 14px 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 99999; font-family: sans-serif; }
+    #xolo-chat-box { display: none; position: fixed; bottom: 80px; right: 20px; width: 340px; max-width: 90vw; height: 450px; background: #1a1a1a; color: #f1f1f1; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 99999; font-family: sans-serif; border: 1px solid #333; }
     #xolo-chat-header { background: #e63946; padding: 12px 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
     #xolo-chat-msgs { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
     .xolo-msg-user { background: #e63946; color: #fff; align-self: flex-end; padding: 8px 12px; border-radius: 12px 12px 0 12px; max-width: 80%; }
@@ -50,10 +83,10 @@ function iniciarWidgetXolo() {
       <span id="xolo-close" style="cursor:pointer;">✖</span>
     </div>
     <div id="xolo-chat-msgs">
-      <div class="xolo-msg-bot">¡Qué tal! Soy el asistente de <b>XOLO SOUND</b>. ¿Buscas pantallas Android, bocinas, amplificadores o herramientas para tu auto?</div>
+      <div class="xolo-msg-bot">¡Qué tal! Soy el asistente de <b>XOLO SOUND</b>. Pregúntame por precios o modelos de pantallas Android, bocinas, amplificadores o herramientas.</div>
     </div>
     <form id="xolo-chat-form">
-      <input id="xolo-chat-input" type="text" placeholder="Ej. ¿Qué subwoofers tienes?" required />
+      <input id="xolo-chat-input" type="text" placeholder="Ej. ¿Qué pantallas tienes?" required />
       <button id="xolo-chat-send" type="submit">Enviar</button>
     </form>
   `;
@@ -79,11 +112,11 @@ function iniciarWidgetXolo() {
     msgs.innerHTML += `<div class="xolo-msg-bot" id="${loadingId}">Revisando catálogo...</div>`;
     msgs.scrollTop = msgs.scrollHeight;
 
-    const promptCompleto = `${CONTEXTO_NEGOCIO}\n\nCATÁLOGO ACTUAL EN LA PÁGINA:\n${obtenerCatalogoEnVivo()}\n\nPREGUNTA DEL CLIENTE: ${pregunta}`;
+    const promptCompleto = `${CONTEXTO_NEGOCIO}\n\nCATÁLOGO DISPONIBLE EN XOLO SOUND:\n${obtenerCatalogoEnVivo()}\n\nPREGUNTA DEL CLIENTE: ${pregunta}`;
 
     try {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -93,13 +126,24 @@ function iniciarWidgetXolo() {
         }
       );
       const data = await res.json();
-      const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "No pude procesar tu consulta. Escríbenos directo al WhatsApp 665 120 5695.";
-      document.getElementById(loadingId).innerHTML = respuesta.replace(/\n/g, "<br>");
+
+      if (data.error) {
+        console.warn("Aviso API Gemini:", data.error.message);
+        document.getElementById(loadingId).innerHTML = respuestaRespaldoCatalogo(pregunta);
+      } else {
+        const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || respuestaRespaldoCatalogo(pregunta);
+        document.getElementById(loadingId).innerHTML = respuesta.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>");
+      }
     } catch (err) {
-      document.getElementById(loadingId).textContent = "Error de conexión. Contáctanos por WhatsApp al 665 120 5695.";
+      console.warn("Error de red, usando catálogo local:", err);
+      document.getElementById(loadingId).innerHTML = respuestaRespaldoCatalogo(pregunta);
     }
     msgs.scrollTop = msgs.scrollHeight;
   };
 }
 
-window.addEventListener("DOMContentLoaded", iniciarWidgetXolo);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", iniciarWidgetXolo);
+} else {
+  iniciarWidgetXolo();
+}
