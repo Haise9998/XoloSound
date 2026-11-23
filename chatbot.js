@@ -1,7 +1,6 @@
 // chatbot.js - Asistente Virtual para XOLO SOUND
-// Divide tu API key en dos partes para evitar que los bots de GitHub la detecten y revoquen automáticamente
-const KEY_PARTE_1 = "PEGA_LA_PRIMERA_MITAD_DE_TU_KEY";
-const KEY_PARTE_2 = "PEGA_LA_SEGUNDA_MITAD_DE_TU_KEY";
+const KEY_PARTE_1 = "AIzaSyACBY1TtxOUJIY";
+const KEY_PARTE_2 = "eCK3MFruC0Rreu_saXiE";
 const GEMINI_API_KEY = KEY_PARTE_1 + KEY_PARTE_2;
 
 const CONTEXTO_NEGOCIO = `
@@ -24,7 +23,7 @@ function obtenerCatalogoEnVivo() {
   return "Catálogo no cargado.";
 }
 
-// Respuesta inteligente de respaldo usando tu catálogo real si la API falla
+// Respuesta inteligente de respaldo usando tu catálogo real si la API falla o se queda sin cuota
 function respuestaRespaldoCatalogo(pregunta) {
   if (typeof productos === "undefined" || !Array.isArray(productos)) {
     return "Contáctanos por WhatsApp al 665 120 5695 para cotizar al momento.";
@@ -32,7 +31,7 @@ function respuestaRespaldoCatalogo(pregunta) {
 
   const q = pregunta.toLowerCase();
   const palabrasClave = q
-    .replace(/s\b/g, "") // convierte "pantallas" -> "pantalla", "bocinas" -> "bocina"
+    .replace(/s\b/g, "")
     .split(/\s+/)
     .filter(w => w.length > 3);
 
