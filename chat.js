@@ -1,5 +1,5 @@
 // chatbot.js - Asistente Virtual para XOLO SOUND
-const GEMINI_API_KEY = "TU_API_KEY_AQUI"; // Restríngela en Google AI Studio solo para https://haise9998.github.io/*
+const GEMINI_API_KEY = "AIzaSyACBY1TtxOUJIYeCK3MFruC0Rreu_saXiE"; // Restríngela en Google AI Studio solo para https://haise9998.github.io/*
 
 const CONTEXTO_NEGOCIO = `
 Eres el asesor experto de XOLO SOUND, negocio con 14 años de experiencia ubicado en El Hongo, Tecate, Baja California.
